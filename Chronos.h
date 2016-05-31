@@ -8,10 +8,11 @@
 
 
 class Chronos {
-	
+
 public:
 
 	Chronos();
+	Chronos(int timezone, int dst=-1);
 
 	int year(time_t t);
 	int yearDay(time_t);
@@ -22,12 +23,13 @@ public:
 	int minute(time_t t);
 	int second(time_t t);
 
+	void config(int timezone, int dst=-1);
 	time_t now();
 	time_t utc(time_t t);
-	time_t makeTime(int year, int month, int day, int hour, int min, int sec,bool isDst=-1);
+	//time_t makeTime(int year, int month, int day, int hour, int min, int sec,bool isDst=-1);
 
-	bool isZero(time_t t); 
-	
+	bool isZero(time_t t);
+
 	String string(time_t t);
 	String clock();
 	String date();

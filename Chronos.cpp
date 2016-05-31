@@ -4,6 +4,9 @@ Chronos::Chronos() {
 
 }
 
+Chronos::Chronos(int timezone, int dst) {
+  config(timezone,dst);
+}
 
 /*******************************************************
 
@@ -52,7 +55,7 @@ int Chronos::day(time_t t) {
  hour
 
  *******************************************************/
-int Chronos::hour(time_t t) { 
+int Chronos::hour(time_t t) {
 
   timeinfo = localtime (&t);
   return timeinfo->tm_hour;
@@ -64,7 +67,7 @@ int Chronos::hour(time_t t) {
  the hour for the given time in 12 hour format
 
  *******************************************************/
-int Chronos::hour12(time_t t) { 
+int Chronos::hour12(time_t t) {
 
   timeinfo = localtime (&t);
 
@@ -98,7 +101,7 @@ int Chronos::second(time_t t) {
 
 /*******************************************************
 
- string 
+ string
  Www Mmm dd hh:mm:ss yyyy
 
  *******************************************************/
@@ -117,10 +120,17 @@ time_t Chronos::utc(time_t t) {
     struct tm * ptm = gmtime (&t);
     return mktime ( ptm );
 }
+/*******************************************************
 
+ isZero Thu Jan 01 00:00:00 1970
+
+ *******************************************************/
 bool Chronos::isZero(time_t t) {
-  //Thu Jan 01 00:00:00 1970
 
+  if (t == 0){
+    return true;
+  }
+  return false;
 }
 
 /*******************************************************
@@ -167,7 +177,7 @@ void Chronos::weekDay(int dayNum, char buffer[]) {
 }
 
 time_t Chronos::now(){
-  //time_t 
+  //time_t
   timeNow = time(nullptr);
   //Serial.println(ctime(&now));
   return timeNow;
@@ -175,22 +185,31 @@ time_t Chronos::now(){
   //timeinfo = localtime (&timeNow);
 }
 
-time_t Chronos::makeTime(int year, int month, int day, int hour, int min, int sec, bool isDst) {
-    
+void Chronos::config(int timezone, int dst) {
+    configTime(timezone * 3600, dst, "pool.ntp.org", "time.nist.gov"); //configtime is esp8266 function
+}
+
+/*time_t Chronos::makeTime(int year, int month, int day, int hour, int min, int sec, bool isDst) {
+
     //time_t tempTime = time(nullptr);
     //mTime = localtime(&tempTime); //just used to setup the tm struct
     struct tm mTime = { 0 };
-    
+
     mTime.tm_sec = sec;
     mTime.tm_min = min;
     mTime.tm_hour = hour;
     mTime.tm_mon = month - 1;
     mTime.tm_year = year - 1900;
     mTime.tm_mday = day;
-    mTime.tm_isdst = isDst; 
+    mTime.tm_isdst = isDst;
+     //Serial.printf("%d %d %d %d %d %d", mTime.tm_year, mTime.tm_mon + 1, mTime.tm_mday, mTime.tm_hour, mTime.tm_min, mTime.tm_sec);
+
+    // system_mktime expects month in range 1..12
+  //#define START_MONTH 1
+  //return DIFF1900TO1970 + system_mktime(t->tm_year, t->tm_mon + START_MONTH, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec);
 
     return mktime(&mTime);
-}
+} */
 
 /*******************************************************
 
@@ -256,6 +275,3 @@ void Chronos::clockMinute(int tm_minute, char buffer[]) {
   }
 
 }
-
-
-
